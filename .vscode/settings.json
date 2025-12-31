@@ -1,0 +1,38 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "eslint.validate": ["javascript", "typescript"],
+  "eslint.useFlatConfig": true,
+  "prettier.requireConfig": true,
+  "workbench.editor.customLabels.patterns": {
+    "**/*.controller.ts": "${filename} - Controller 🎯",
+    "**/*.service.ts": "${filename} - Service 🛠️",
+    "**/*.entity.ts": "${filename} - Entity 🧬",
+    "**/*.routes.ts": "${filename} - Routes 🛣️",
+    "**/*.middleware.ts": "${filename} - Middleware 🧱",
+    "**/*.schemas.ts": "${filename} - Schema 📋",
+    "**/*.interface.ts": "${filename} - Interface 📐",
+    "**/*.utils.ts": "${filename} - Utils 🧰",
+    "**/*.dto.ts": "${filename} - DTO 📦",
+    "**/config/*.ts": "${filename} - Config ⚙️",
+    "**/migrations/*.ts": "${filename} - Migration 🗄️",
+    "**/scripts/*.ts": "${filename} - Script 📜",
+    "**/decorators/*.ts": "${filename} - Decorator ✨",
+    "**/index.ts": "Index 🏠"
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.git/**": true
+  },
+  "files.associations": {
+    "*.env*": "properties"
+  },
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/.git/**": true
+  },
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true,
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true
+}

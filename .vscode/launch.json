@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🐛 Debug API",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "console": "integratedTerminal",
+      "restart": true,
+      "env": {
+        "REDIS_HOST": "localhost",
+        "DB_HOST": "localhost",
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "🐛 Debug API DevContainer",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ],
+      "console": "integratedTerminal",
+      "restart": true,
+      "env": {
+        "REDIS_HOST": "localhost",
+        "DB_HOST": "mysql",
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}

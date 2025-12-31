@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        background: #fff;
+        max-width: 600px;
+        margin: 40px auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        padding: 24px;
+      }
+      h2 {
+        color: #333;
+        margin-bottom: 16px;
+      }
+      .card {
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        padding: 16px;
+        margin-bottom: 16px;
+        background: #fafafa;
+      }
+      .card-title {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1976d2;
+      }
+      .card-details {
+        margin: 8px 0 0 0;
+        color: #444;
+      }
+      .price {
+        color: #388e3c;
+        font-size: 16px;
+        font-weight: bold;
+      }
+      .link {
+        display: inline-block;
+        margin-top: 8px;
+        color: #fff !important;
+        background: #1976d2;
+        padding: 8px 16px;
+        border-radius: 4px;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Ofertas de Tarjetas Gráficas</h2>
+      {{#each cards}}
+        <div class="card" style="
+          {{#if (eq this.shop "Neobyte")}}
+            background:#e3f2fd;
+          {{else if (eq this.shop "PcComponentes")}}
+            background:#e8f5e9;
+          {{else if (eq this.shop "PcComponentes Marketplace")}}
+            background:#fff3e0;
+          {{else}}
+            background:#fafafa;
+          {{/if}}
+        ">
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;">
+            <tr>
+              <td style="width:110px; vertical-align:top; padding-right:16px;">
+                <img src="{{this.imgUrl}}" alt="{{this.title}}" style="width:100px; height:auto; border-radius:4px; border:1px solid #ddd; background:#fff; display:block;">
+              </td>
+              <td style="vertical-align:top;">
+                <div class="card-title" style="margin-bottom:8px;">{{this.title}}</div>
+                <div class="card-details" style="margin-bottom:8px;">
+                  <strong>Precio final:</strong> <span class="price">{{this.finalPrice}} €</span><br>
+                  <strong>Precio original:</strong> <span style="text-decoration:line-through; color:#888;">{{this.originalPrice}} €</span><br>
+                  <strong>Descuento:</strong> <span style="color:#d32f2f; font-weight:bold;">{{this.discount}}%</span><br>
+                  <strong>Stock:</strong> <span style="color:{{#if this.stock}}#388e3c{{else}}#d32f2f{{/if}}; font-weight:bold;">{{#if this.stock}}Disponible{{else}}Sin stock{{/if}}</span><br>
+                  <strong>Tienda:</strong> <span>{{this.shop}}</span><br>
+                  <span style="font-size:12px; color:#666;">ID: {{this.id}}</span>
+                </div>
+                <a class="link" href="{{this.url}}" target="_blank">Ver oferta</a>
+              </td>
+            </tr>
+          </table>
+        </div>
+      {{/each}}
+    </div>
+  </body>
+</html>
