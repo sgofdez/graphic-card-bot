@@ -7,22 +7,33 @@ if (!config.CHROMIUM_PATH) {
   throw new Error("CHROMIUM_PATH no definido en .env");
 }
 
-(async () => {
-  const [neobyteResult, pccomResult, pccomResult2] = await Promise.all([
-    checkNeobyte(),
-    checkPcComponentes(),
-    checkPcComponentes2()
-  ]
-  );
+async function runChecks(parallel = true) {
+  let results = [];
 
-  const allResults = [
-    ...neobyteResult,
-    ...pccomResult,
-    ...pccomResult2
-  ];
+  if (parallel) {
+    // EJECUCIÓN SIMULTÁNEA
+    const [neobyteResult, pccomResult, pccomResult2] = await Promise.all([
+      checkNeobyte(),
+      checkPcComponentes(),
+      checkPcComponentes2()
+    ]);
 
-  if (allResults.length > 0) {
-    await sendMailWithGraphicCards(allResults);
+    results = [
+      ...neobyteResult,
+      ...pccomResult,
+      ...pccomResult2
+    ];
+  } else {
+    // EJECUCIÓN SECUENCIAL
+    results.push(...await checkNeobyte());
+    results.push(...await checkPcComponentes());
+    results.push(...await checkPcComponentes2());
   }
 
-})();
+  if (results.length > 0) {
+    await sendMailWithGraphicCards(results);
+  }
+}
+
+runChecks(config.EXECUTION_PARALLEL);
+

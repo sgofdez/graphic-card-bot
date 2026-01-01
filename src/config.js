@@ -11,6 +11,8 @@ export const config = {
   DISCOUNT_PERCENTAGE_WARNING: 20,
   DISCOUNT_PRICE_WARNING: 1100,
 
+  EXECUTION_PARALLEL: false,
+
   // Email
    email: {
     host: process.env.EMAIL_HOST || 'smtp.example.com',
