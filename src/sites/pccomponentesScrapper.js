@@ -5,7 +5,7 @@ export async function checkPcComponentes() {
     "https://www.pccomponentes.com/tarjetas-graficas/geforce-rtx-5080/grafica-nvidia?seller=pccomponentes";
   const { browser, page } = await getInstancePuppeteer(PRODUCT_URL);
 
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 6000)); // Cloudlflare delay
 
   await rejectCookies(page);
   await lowerPriceAsc(page);
@@ -21,7 +21,7 @@ export async function checkPcComponentes2() {
     "https://www.pccomponentes.com/tarjetas-graficas/geforce-rtx-5080/grafica-nvidia?seller=marketplace";
   const { browser, page } = await getInstancePuppeteer(PRODUCT_URL);
 
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 6000)); // Cloudlflare delay
 
   await rejectCookies(page);
   await lowerPriceAsc(page);
