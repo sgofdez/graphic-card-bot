@@ -76,6 +76,7 @@
                 <div class="card-details" style="margin-bottom:8px;">
                   <strong>Precio final:</strong> <span class="price">{{this.finalPrice}} €</span><br>
                   <strong>Precio original:</strong> <span style="text-decoration:line-through; color:#888;">{{this.originalPrice}} €</span><br>
+		  <strong>Precio anterior:</strong> <span style="text-decoration:line-through;color:pink;">{{this.lastImportantPrice}} €</span><br>
                   <strong>Descuento:</strong> <span style="color:#d32f2f; font-weight:bold;">{{this.discount}}%</span><br>
                   <strong>Stock:</strong> <span style="color:{{#if this.stock}}#388e3c{{else}}#d32f2f{{/if}}; font-weight:bold;">{{#if this.stock}}Disponible{{else}}Sin stock{{/if}}</span><br>
                   <strong>Tienda:</strong> <span>{{this.shop}}</span><br>

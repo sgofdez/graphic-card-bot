@@ -7,7 +7,7 @@ export const config = {
   CHROMIUM_PATH: process.env.CHROMIUM_PATH || "",
   USER_AGENT:
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-  FINAL_PRICE_WARNING: 999.99,
+  FINAL_PRICE_WARNING: 1550,
   DISCOUNT_PERCENTAGE_WARNING: 20,
   DISCOUNT_PRICE_WARNING: 1100,
 

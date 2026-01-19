@@ -62,15 +62,26 @@ export async function sendMailWithGraphicCards(importantProducts) {
     // Filtrar solo productos cuyo finalPrice haya cambiado o sean nuevos
     const changedProducts = importantProducts.filter(card => {
       const prev = priceStore[card.id];
-      return prev === undefined || prev !== card.finalPrice;
-    });
+      if (prev === undefined || prev !== card.finalPrice) {
+      
+        card.lastImportantPrice = priceStore[card.id] || 0;
+        return true;
+      }
+      
+      return false;
+    })
+    .sort((a, b) => a.finalPrice - b.finalPrice);
 
-    if (changedProducts.length === 0) {
-      console.log('No hay cambios de precio, no se envía correo.');
-      return;
-    } else {
-      console.log(`Se encontraron ${changedProducts.length} productos con cambios de precio.`);
-    }
+const now = new Date().toLocaleTimeString('es-ES');
+
+if (changedProducts.length === 0) {
+  console.log(`[${now}] No hay cambios de precio, no se envía correo.`);
+  return;
+} else {
+  console.log(
+    `[${now}] Se encontraron ${changedProducts.length} productos con cambios de precio.`
+  );
+}
 
     // Actualizar el store con los nuevos precios
     changedProducts.forEach(card => {
