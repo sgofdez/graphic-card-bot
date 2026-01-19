@@ -17,7 +17,7 @@ export async function checkAmazon() {
 
 export async function checkAmazon2() {
   const PRODUCT_URL =
-    "https://www.amazon.es/ASUS-GeForce-Compatible-Ventiladores-Axial-Tech/dp/B0DS65KD1C?th=1";
+    "https://www.amazon.es/ASUS-componentes-Revestimiento-Ventiladores-axial-Tech/dp/B0DVGJFMT5";
   const { browser, page } = await getInstancePuppeteer(PRODUCT_URL);
 
   await new Promise(resolve => setTimeout(resolve, 6000)); // Cloudlflare delay
@@ -49,9 +49,26 @@ export async function getInfoCards(page) {
   const finalPrice = await page.$eval(
     "#corePrice_feature_div .a-offscreen",
     el => {
-     return parseFloat(el.textContent.replace('€','').replace(/\./g,'').replace(',', '.'));
+      const text = el.textContent.replace('€', '').trim();
+      // Detectar formato: si tiene coma después del último punto, es formato EU (1.474,20)
+      // Si tiene punto después de la última coma, es formato US (1,474.20)
+      const lastComma = text.lastIndexOf(',');
+      const lastDot = text.lastIndexOf('.');
+      
+      if (lastComma > lastDot) {
+        // Formato EU: 1.474,20 → quitar puntos, cambiar coma por punto
+        return parseFloat(text.replace(/\./g, '').replace(',', '.'));
+      } else {
+        // Formato US: 1,474.20 → quitar comas
+        return parseFloat(text.replace(/,/g, ''));
+      }
     }
-  ).catch(() => null);
+  ).catch((err) => {
+    console.log("Error extrayendo precio Amazon:", err.message);
+    return null;
+  });
+
+  console.log("Precio final Amazon:", finalPrice);
 
   const ssfData = await page.$eval(
     '#ssf-primary-widget-desktop',
