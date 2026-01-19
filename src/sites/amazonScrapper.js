@@ -28,6 +28,34 @@ export async function rejectCookies(page) {
   }
 }
 
+export async function checkAmazon2() {
+  const PRODUCT_URL =
+    "https://www.amazon.es/ASUS-GeForce-Compatible-Ventiladores-Axial-Tech/dp/B0DS65KD1C?th=1";
+  const { browser, page } = await getInstancePuppeteer(PRODUCT_URL);
+
+  await new Promise(resolve => setTimeout(resolve, 6000)); // Cloudlflare delay
+
+  await rejectCookies(page);
+
+  const products = await getInfoCards(page);
+  browser.close();
+
+  return getImportantGraphicCards(products);
+}
+
+export async function rejectCookies(page) {
+  const buttonId = "sp-cc-accept";
+  try {
+    const button = await page.waitForSelector(`#${buttonId}`, {
+      timeout: 5000,
+    });
+    await button.click();
+  } catch (error) {
+    console.log(error);
+    return;
+  }
+}
+
 export async function getInfoCards(page) {
   const results = [];
 

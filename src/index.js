@@ -1,6 +1,6 @@
 import { config } from "./config.js";
 import { sendMailWithGraphicCards } from "./scrapper.js";
-import { checkAmazon } from "./sites/amazonScrapper.js";
+import { checkAmazon, checkAmazon2 } from "./sites/amazonScrapper.js";
 import { checkNeobyte } from "./sites/neobyteScrapper.js";
 import { checkPcComponentes, checkPcComponentes2 } from "./sites/pccomponentesScrapper.js";
 import { execSync } from "child_process";
@@ -40,6 +40,7 @@ async function runChecks(parallel = true) {
     results.push(...await checkPcComponentes());
     // results.push(...await checkPcComponentes2());
     results.push(...await checkAmazon());
+    results.push(...await checkAmazon2());
   }
   
   if (results.length > 0) {
