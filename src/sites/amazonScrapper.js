@@ -15,19 +15,6 @@ export async function checkAmazon() {
   return getImportantGraphicCards(products);
 }
 
-export async function rejectCookies(page) {
-  const buttonId = "sp-cc-accept";
-  try {
-    const button = await page.waitForSelector(`#${buttonId}`, {
-      timeout: 5000,
-    });
-    await button.click();
-  } catch (error) {
-    console.log(error);
-    return;
-  }
-}
-
 export async function checkAmazon2() {
   const PRODUCT_URL =
     "https://www.amazon.es/ASUS-GeForce-Compatible-Ventiladores-Axial-Tech/dp/B0DS65KD1C?th=1";
