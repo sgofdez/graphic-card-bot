@@ -37,7 +37,7 @@ async function runChecks(parallel = true) {
     // EJECUCIÓN SECUENCIAL
     console.log("Empieza consulta...")
     //results.push(...await checkNeobyte());
-    results.push(...await checkPcComponentes());
+    // results.push(...await checkPcComponentes());
     // results.push(...await checkPcComponentes2());
     results.push(...await checkAmazon());
     results.push(...await checkAmazon2());

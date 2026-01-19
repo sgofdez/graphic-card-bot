@@ -49,13 +49,7 @@ export async function getInfoCards(page) {
   const finalPrice = await page.$eval(
     "#corePrice_feature_div .a-offscreen",
     el => {
-      console.log("llego");
-      const priceText = el.textContent.trim();
-      const clean = priceText
-        .replace(/\./g, "") // quita puntos de miles
-        .replace(/,/, ".")   // cambia la coma decimal por punto
-        .replace(/[^\d.]/g, ""); // elimina cualquier otro caracter
-      return Number(clean);
+     return parseFloat(el.textContent.replace('€','').replace(/\./g,'').replace(',', '.'));
     }
   ).catch(() => null);
 
