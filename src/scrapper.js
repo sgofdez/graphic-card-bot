@@ -1,6 +1,5 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
-import { config } from "./config.js";
 import fs from 'fs';
 import { join } from 'path';
 import handlebars from 'handlebars';
@@ -10,30 +9,68 @@ import { connect } from "puppeteer-real-browser";
 // Usar el plugin stealth para evitar detección de Cloudflare
 puppeteer.use(StealthPlugin());
 
-export async function getInstancePuppeteer(url) {
-  const { browser, page } = await connect({
-    headless: false,
+export async function getInstancePuppeteer(url, config) {
 
-    args: [],
+  if (process.platform === 'win32') {
+    console.log('Iniciando Puppeteer en Windows');
+    const browser = await puppeteer.launch({
+      executablePath: config.CHROMIUM_PATH,
+      headless: config.HEADLESS,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-blink-features=AutomationControlled",
+        "--disable-infobars",
+        "--window-size=1280,720",
+      ],
+      ignoreDefaultArgs: ["--enable-automation"],
+    });
 
-    customConfig: {},
+    const page = await browser.newPage();
 
-    turnstile: true,
+    // Configurar viewport para parecer más humano
+    await page.setViewport({ width: 1280, height: 720 });
 
-    connectOption: {},
+    await page.setUserAgent(config.USER_AGENT);
 
-    disableXvfb: false,
-    ignoreAllFlags: false,
-  });
-  await page.goto(url);
+    // Ocultar que estamos usando webdriver
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, "webdriver", { get: () => undefined });
+    });
 
-  return { browser, page };
+    await page.goto(url, {
+      waitUntil: "networkidle2",
+      timeout: 60000,
+    });
+
+    return { browser, page };
+
+
+  } else if (process.platform === 'linux') {
+    console.log('Iniciando Puppeteer en Linux');
+    const { browser, page } = await connect({
+      headless: false,
+      turnstile: true,
+      disableXvfb: false,
+    });
+    await page.goto(url, { waitUntil: "domcontentloaded" });
+    return { browser, page };
+  }
+
+
 }
 
-export function getImportantGraphicCards(cards) {
-  const finalPriceWarning = config.FINAL_PRICE_WARNING;
-  const discountPercentageWarning = config.DISCOUNT_PERCENTAGE_WARNING;
-  const discountPriceWarning = config.DISCOUNT_PRICE_WARNING;
+export function getLinkSettings(link, config) {
+  return (
+    config.LINKS.find(l => l.url === link) || {}
+  );
+}
+
+export function getImportantGraphicCards(cards, link, config) {
+  const settings = getLinkSettings(link, config);
+  const finalPriceWarning = settings.FINAL_PRICE_WARNING ?? 99999;
+  const discountPercentageWarning = settings.DISCOUNT_PERCENTAGE_WARNING ?? 0;
+  const discountPriceWarning = settings.DISCOUNT_PRICE_WARNING ?? 99999;
 
   return cards.filter((card) => {
     const meetsFinalPrice = card.finalPrice <= finalPriceWarning;
@@ -47,7 +84,7 @@ export function getImportantGraphicCards(cards) {
 
 
 
-export async function sendMailWithGraphicCards(importantProducts) {
+export async function sendMailWithGraphicCards(importantProducts, config) {
   try {
     // Leer o inicializar el store
     let priceStore = {};
@@ -79,7 +116,7 @@ export async function sendMailWithGraphicCards(importantProducts) {
     fs.writeFileSync(config.storePath, JSON.stringify(priceStore, null, 2), 'utf8');
 
     // Registrar helper 'eq' para Handlebars
-    handlebars.registerHelper('eq', function(a, b) {
+    handlebars.registerHelper('eq', function (a, b) {
       return a === b;
     });
 

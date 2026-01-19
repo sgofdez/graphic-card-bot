@@ -1,39 +1,66 @@
-import { config } from "./config.js";
+import { getConfig } from "./config.js";
 import { sendMailWithGraphicCards } from "./scrapper.js";
-import { checkNeobyte } from "./sites/neobyteScrapper.js";
-import { checkPcComponentes, checkPcComponentes2 } from "./sites/pccomponentesScrapper.js";
+import { PcComponentesScrapper } from "./sites/pccomponentesScrapper.js";
+import { NeobyteScrapper } from "./sites/neobyteScrapper.js";
 
-if (!config.CHROMIUM_PATH) {
-  throw new Error("CHROMIUM_PATH no definido en .env");
-}
+async function main() {
+  const config = await getConfig();
 
-async function runChecks(parallel = true) {
-  let results = [];
-
-  if (parallel) {
-    // EJECUCIÓN SIMULTÁNEA
-    const [neobyteResult, pccomResult, pccomResult2] = await Promise.all([
-      checkNeobyte(),
-      checkPcComponentes(),
-      checkPcComponentes2()
-    ]);
-
-    results = [
-      ...neobyteResult,
-      ...pccomResult,
-      ...pccomResult2
-    ];
-  } else {
-    // EJECUCIÓN SECUENCIAL
-    results.push(...await checkNeobyte());
-    results.push(...await checkPcComponentes());
-    results.push(...await checkPcComponentes2());
+  if (!config.CHROMIUM_PATH) {
+    throw new Error("CHROMIUM_PATH no definido en .env");
   }
 
-  if (results.length > 0) {
-    await sendMailWithGraphicCards(results);
+  async function runChecks(parallel = true) {
+    let results = [];
+
+    // Obtener links desde config.LINKS (array)
+    const pccomLinks = config.LINKS.filter(l => l.type === 'pccomponentes').map(l => l.url);
+    const neobyteLinks = config.LINKS.filter(l => l.type === 'neobyte').map(l => l.url);
+
+    if (pccomLinks.length === 0 && neobyteLinks.length === 0) {
+      console.log('No hay links configurados en config.local.js (LINKS)');
+      return;
+    }
+
+    if (parallel) {
+      // EJECUCIÓN SIMULTÁNEA
+      const promises = [];
+
+      for (const link of pccomLinks) {
+        const pcComScrapper = new PcComponentesScrapper(link);
+        promises.push(pcComScrapper.checkOffers(config));
+      }
+
+      for (const link of neobyteLinks) {
+        const neobyteScrapper = new NeobyteScrapper(link);
+        promises.push(neobyteScrapper.checkOffers(config));
+      }
+
+      results = (await Promise.all(promises)).flat();
+
+
+    } else {
+      // EJECUCIÓN SECUENCIAL
+      for (const link of pccomLinks) {
+        const pcComScrapper = new PcComponentesScrapper(link);
+        const pccomResults = await pcComScrapper.checkOffers(config);
+        results = results.concat(pccomResults);
+      }
+
+      for (const link of neobyteLinks) {
+        const neobyteScrapper = new NeobyteScrapper(link);
+        const neobyteResults = await neobyteScrapper.checkOffers(config);
+        results = results.concat(neobyteResults);
+      }
+    }
+
+    if (results.length > 0) {
+      await sendMailWithGraphicCards(results, config);
+    }
   }
+
+  await runChecks(config.EXECUTION_PARALLEL);
 }
 
-runChecks(config.EXECUTION_PARALLEL);
+main();
 
